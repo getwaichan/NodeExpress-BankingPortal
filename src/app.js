@@ -8,6 +8,29 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req,res) => res.render('index', { title: 'Index' }));
+
+let accountData="";
+accountData=fs.readFileSync(path.join(process.cwd(),'./src/json/accounts.json'), 'utf8', 
+    ( err, accountData ) => {
+    if (err) throw err;
+    console.log(accountData);    
+}).toString();
+
+let accounts = JSON.parse(accountData);
+// console.log(accountData);
+
+let userData="";
+userData=fs.readFileSync(path.join(process.cwd(),'src/json/users.json'),'UTF8', (err, userData) => {
+    if (err) throw err;
+    console.log(userData);    
+}).toString();
+let users = JSON.parse(userData);
+// console.log(users);
+
+app.get('/', (req,res) => res.render( 'index', { title: 'Account Summary', accounts: accounts } ));
+app.get('/savings', (req,res) => res.render( 'account', { account: accounts.savings }));
+app.get('/checking', (req,res) => res.render( 'account', { account: accounts.checking }));
+app.get('/credit', (req,res) => res.render( 'account', { account: accounts.credit }));
+app.get('/profile', (req,res) => res.render('profile', { user: users[0] }));
 
 app.listen(3000, () => console.log('PS Project Running on port 3000!'));
